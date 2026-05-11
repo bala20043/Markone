@@ -8,10 +8,9 @@ app = Flask(__name__)
 
 # ✅ Gemini API Configuration
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
 if not GEMINI_API_KEY:
-    # Fallback for local testing if .env is missing, 
-    # but in production this should be set in the platform dashboard
-    GEMINI_API_KEY = "AIzaSyC_fwJSdBJbp8oV90VG9dvVbU6dRQhLK-g" 
+    print("⚠️ Warning: GEMINI_API_KEY not found in environment variables or .env file.")
 
 genai.configure(api_key=GEMINI_API_KEY)
 
