@@ -7,7 +7,6 @@ instance/
 .pytest_cache/
 .vscode/
 .idea/
-*.mp4
-*.png
-*.jpg
-*.jpeg
+
+# Allow static assets
+!static/
