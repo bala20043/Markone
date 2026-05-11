@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MarkOne AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&family=Roboto&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+
+  <style>
+    :root {
+      --bg-color: #1e1e1e;
+      --text-color: #ffffff;
+      --input-bg: #2a2a2a;
+      --sidebar-bg: #2c2c2c;
+      --ai-msg-bg: #333;
+      --user-msg-bg: #007bff;
+      --border-color: #444;
+    }
+
+    body.light-mode {
+      --bg-color: #f8f9fa;
+      --text-color: #111;
+      --input-bg: #ffffff;
+      --sidebar-bg: #e9ecef;
+      --ai-msg-bg: #e0e0e0;
+      --user-msg-bg: #0d6efd;
+      --border-color: #ccc;
+    }
+
+    body {
+      margin: 0;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Roboto', sans-serif;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      width: 260px;
+      background-color: var(--sidebar-bg);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+    }
+
+    .sidebar h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 20px;
+      margin: 20px 0;
+      color: #00ffe7;
+      text-align: center;
+    }
+
+    .sidebar a {
+      padding: 12px;
+      margin-bottom: 5px;
+      border-radius: 6px;
+      text-decoration: none;
+      color: var(--text-color);
+    }
+
+    .sidebar a:hover {
+      background-color: #3a3a3a;
+      color: #fff;
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-color);
+      text-align: center;
+      font-size: 24px;
+      font-family: 'Orbitron', sans-serif;
+      color: #00ffe7;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .theme-toggle {
+      background: none;
+      border: none;
+      font-size: 22px;
+      cursor: pointer;
+      color: var(--text-color);
+    }
+
+    .chat-body {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .message {
+      padding: 15px;
+      border-radius: 12px;
+      max-width: 70%;
+      word-wrap: break-word;
+    }
+
+    .user-msg {
+      background-color: var(--user-msg-bg);
+      align-self: flex-end;
+      color: #fff;
+    }
+
+    .ai-msg {
+      background-color: var(--ai-msg-bg);
+      border: 1px solid #00ffe7;
+      align-self: flex-start;
+      color: var(--text-color);
+    }
+
+    .chat-input {
+      display: flex;
+      padding: 15px;
+      border-top: 1px solid var(--border-color);
+      background-color: var(--input-bg);
+    }
+
+    .chat-input textarea {
+      flex: 1;
+      resize: none;
+      padding: 12px;
+      font-size: 1rem;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      border: 1px solid #555;
+      border-radius: 10px;
+    }
+
+    .chat-input button {
+      margin-left: 10px;
+      background-color: #00ffe7;
+      border: none;
+      color: black;
+      padding: 10px 20px;
+      border-radius: 10px;
+    }
+
+    .mic-btn {
+      background-color: #444;
+      border: none;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 10px;
+      margin-left: 10px;
+    }
+
+    pre {
+      position: relative;
+      background-color: #282c34;
+      padding: 12px;
+      border-radius: 10px;
+      overflow-x: auto;
+      margin-top: 10px;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background-color: #00ffe7;
+      border: none;
+      color: black;
+      padding: 4px 10px;
+      font-size: 12px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>MarkOne AI</h2>
+    <a href="#">New Chat</a>
+    <a href="#">Library</a>
+    <a href="#">Settings</a>
+    <a href="#">Upgrade</a>
+  </div>
+
+  <div class="main">
+    <div class="chat-header">
+      Chat with MarkOne
+      <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+    </div>
+    <div class="chat-body" id="chatBody"></div>
+
+    <div class="chat-input">
+      <textarea id="userInput" rows="1" placeholder="Ask anything..."></textarea>
+      <button onclick="document.getElementById('imageInput').click()">＋</button>
+      <input type="file" id="imageInput" accept="image/*" style="display:none" onchange="handleImageUpload(event)">
+      <button onclick="respondToUser()">Send</button>
+      <button class="mic-btn" onclick="startVoice()">🎤</button>
+    </div>
+  </div>
+
+  <script>
+    function enhanceAIResponse(text) {
+      const beautified = text
+        .replace(/^### (.*$)/gim, '📌 <b style="color:#00ffe7;font-size:1.2em;">$1</b>')
+        .replace(/^## (.*$)/gim, '📘 <b style="color:#00dbff;">$1</b>')
+        .replace(/^# (.*$)/gim, '✨ <b style="color:#ffaa00;font-size:1.3em;">$1</b>')
+        .replace(/(Important|Note|Remember):/gi, '<u style="color:#ffd700;"><b>$1:</b></u>')
+        .replace(/\b(Step \d+)/gi, '🪜 <b>$1</b>')
+        .replace(/\b(Conclusion|Summary)\b/gi, '🔍 <u>$1</u>')
+        .replace(/\n/g, '<br>');
+
+      return formatCodeBlocks(beautified);
+    }
+
+    function formatCodeBlocks(text) {
+      const codeRegex = /```(\w+)?\n([\s\S]*?)```/g;
+      return text.replace(codeRegex, (match, lang = '', code) => {
+        const escapedCode = code
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+        return `
+          <pre><code class="language-${lang} hljs">${escapedCode}</code>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </pre>
+        `;
+      });
+    }
+
+    function copyCode(button) {
+      const code = button.parentElement.querySelector('code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        button.innerText = 'Copied!';
+        setTimeout(() => button.innerText = 'Copy', 1000);
+      });
+    }
+
+    function respondToUser() {
+      const inputBox = document.getElementById('userInput');
+      const chatBody = document.getElementById('chatBody');
+      const text = inputBox.value.trim();
+      if (!text) return;
+
+      const userMsg = document.createElement('div');
+      userMsg.className = 'message user-msg';
+      userMsg.textContent = text;
+      chatBody.appendChild(userMsg);
+
+      const aiMsg = document.createElement('div');
+      aiMsg.className = 'message ai-msg';
+      aiMsg.innerHTML = '🧠 Thinking...';
+      chatBody.appendChild(aiMsg);
+
+      chatBody.scrollTop = chatBody.scrollHeight;
+      inputBox.value = '';
+
+      fetch('/ask', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text })
+      })
+      .then(res => res.json())
+      .then(data => {
+        const lines = enhanceAIResponse(data.reply).split('<br>');
+        aiMsg.innerHTML = '';
+
+        let i = 0;
+        const interval = setInterval(() => {
+          if (i >= lines.length) {
+            clearInterval(interval);
+            hljs.highlightAll();
+            chatBody.scrollTop = chatBody.scrollHeight;
+            return;
+          }
+          aiMsg.innerHTML += lines[i] + '<br>';
+          chatBody.scrollTop = chatBody.scrollHeight;
+          i++;
+        }, 60);
+      })
+      .catch(err => {
+        aiMsg.innerHTML = '❌ Error getting response!';
+        console.error(err);
+      });
+    }
+
+    function startVoice() {
+      alert("🎤 Voice input not yet implemented.");
+    }
+
+    function handleImageUpload(event) {
+      alert("🖼️ Image upload not yet implemented.");
+    }
+
+    function toggleTheme() {
+      const body = document.body;
+      body.classList.toggle('light-mode');
+      const mode = body.classList.contains('light-mode') ? 'light' : 'dark';
+      localStorage.setItem('theme', mode);
+    }
+
+    window.onload = () => {
+      const saved = localStorage.getItem('theme');
+      if (saved === 'light') {
+        document.body.classList.add('light-mode');
+      }
+      hljs.highlightAll();
+    };
+  </script>
+</body>
+</html>

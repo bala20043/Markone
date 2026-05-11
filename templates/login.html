@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MarkOne AI - Login</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&family=Roboto&display=swap" rel="stylesheet" />
+
+  <!-- GSAP CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #000000, #0f0f0f);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .login-btn {
+      padding: 15px 40px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: black;
+      background: linear-gradient(45deg, #00ffe7, #00b3b3);
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 0 15px #00ffe7;
+      transition: all 0.3s ease;
+    }
+
+    .login-btn:hover {
+      background: linear-gradient(45deg, #00b3b3, #00ffe7);
+      box-shadow: 0 0 30px #00ffe7;
+    }
+
+    .modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.7);
+      opacity: 0;
+      background: rgba(0, 0, 0, 0.95);
+      border: 2px solid #00ffe7;
+      border-radius: 20px;
+      padding: 30px;
+      z-index: 1000;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 0 30px #00ffe7;
+      display: none;
+    }
+
+    .modal.show {
+      display: block;
+    }
+
+    .modal h2 {
+      font-family: 'Orbitron', sans-serif;
+      text-align: center;
+      margin-bottom: 20px;
+      color: #00ffe7;
+      text-shadow: 0 0 8px #00ffe7;
+    }
+
+    .modal input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      background: #1f1f1f;
+      color: white;
+      font-size: 1rem;
+    }
+
+    .modal input:focus {
+      outline: none;
+      box-shadow: 0 0 10px #00ffe7;
+    }
+
+    .modal button.login-action {
+      width: 100%;
+      padding: 12px;
+      margin-top: 15px;
+      font-size: 1rem;
+      font-weight: bold;
+      background: #00ffe7;
+      color: black;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .modal .close-btn {
+      background: transparent;
+      color: #00ffe7;
+      border: none;
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Optional background video or animation -->
+  <video width="100%" autoplay muted loop>
+    <source src="/static/WhatsApp Video 2025-06-10 at 20.06.59_fdfb328d.mp4" type="video/mp4" />
+  </video>
+
+  <!-- Login Modal -->
+   <div class="modal" id="loginModal">
+  <button class="close-btn" onclick="closeModal()">×</button>
+  <h2>Welcome Back</h2>
+  <form onsubmit="return handleLogin(event)">
+    <input type="email" placeholder="Email Address" required class="modal-item" id="email">
+    <input type="password" placeholder="Password" required class="modal-item" id="password">
+    <button type="submit" class="login-action modal-item">Login</button>
+  </form>
+</div>
+
+  <script>
+    const modal = document.getElementById("loginModal");
+
+    function openModal() {
+      modal.classList.add("show");
+      gsap.fromTo(modal, {scale: 0.7, opacity: 0}, {scale: 1, opacity: 1, duration: 0.6, ease: "power3.out"});
+      gsap.from(".modal-item", {
+        y: 20,
+        opacity: 0,
+        duration: 0.5,
+        stagger: 0.1,
+        delay: 0.3,
+        ease: "power2.out"
+      });
+    }
+
+    function closeModal() {
+      gsap.to(modal, {
+        scale: 0.7,
+        opacity: 0,
+        duration: 0.4,
+        ease: "power3.in",
+        onComplete: () => {
+          window.history.back(); // Return to the previous page
+        }
+      });
+    }
+function handleLogin(event) {
+  event.preventDefault(); // Prevent form from submitting normally
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  // Example check (in real-world apps, verify with backend)
+  if (email && password) {
+    alert("✅ Logged In Successfully!");
+    window.location.href = "/chat"; // ✅ redirect to chat dashboard
+  } else {
+    alert("❌ Please enter valid credentials.");
+  }
+
+  return false;
+}
+
+    window.onload = openModal;
+  </script>
+</body>
+</html>
